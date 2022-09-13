@@ -1,6 +1,7 @@
 #ifndef __UI_H__
 #define __UI_H__
 #include "Free_Fonts.h"
+#include "SDdata.h"
 #include "Seeed_Arduino_ooFreeRTOS.h"
 #include "SysConfig.h"
 #include "seeed_line_chart.h"
@@ -58,7 +59,7 @@ typedef bool (*page_t)(uint8_t key);
 
 class UI : public Thread {
   public:
-    UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1);
+    UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, SDdata &sddata, Message &m1);
     void init();
 
   protected:
@@ -75,6 +76,9 @@ class UI : public Thread {
     Message &btnMail;
 
     SysConfig &cfg;
+    SDdata    &sd;
+
+    uint8_t sensor_save_flag = 0;
 
     std::vector<sensor_data> s_data;
     bool                     s_data_ready = true;
@@ -83,7 +87,7 @@ class UI : public Thread {
     bool                  log_ready = true;
 
     uint8_t rotate_status = 0;
-    bool rotate_flag = false;
+    bool    rotate_flag   = false;
 
     uint8_t            buff[256];
     struct sensor_data sdata;
@@ -125,9 +129,11 @@ class UI : public Thread {
     void         SensePageManager(uint8_t keys);
     bool         Sensor_1(uint8_t select);
     bool         Sensor_2(uint8_t select);
+    bool         Sensor_3(uint8_t select);
     void         SensorADDDisplay(uint8_t chose);
     void         SensorPageState(int PAGES, int _CHOOSE_PAGE);
     void         SensorSubTitle(String value);
+    void         SensorSubTitle2(String value);
     void         SensorUnit(String value);
 
     typedef bool (UI::*page_t)(uint8_t key);
@@ -137,7 +143,7 @@ class UI : public Thread {
     page_t w_network[3] = {&UI::Network_1, &UI::Network_2_1, &UI::Network_3_1};
 
     page_t process[2] = {&UI::Process_1, &UI::Process_2};
-    page_t sense[2]   = {&UI::Sensor_1, &UI::Sensor_2};
+    page_t sense[3]   = {&UI::Sensor_1, &UI::Sensor_2, &UI::Sensor_3};
 
     void PageMangent(uint8_t key);
 

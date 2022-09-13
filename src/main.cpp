@@ -5,6 +5,7 @@
 #include "SamplerThread.h"
 #include "Seeed_Arduino_ooFreeRTOS.h"
 #include "SysConfig.h"
+#include "SDdata.h"
 #include "ui.h"
 #include <Arduino.h>
 #include <SPI.h>
@@ -36,6 +37,9 @@ void setup() {
 
     SysConfig *cfg = new SysConfig();
     cfg->init();
+
+    SDdata *sd = new SDdata();
+    sd->init();
 #ifdef CM_DEBUG
     cm_backtrace_init("Seeed K1100 dev kit", HARDWARE_VERSION, SOFTWARE_VERSION);
 #endif
@@ -51,7 +55,7 @@ void setup() {
     // Message *sensorMail = new Message(256);
 
     ButtonThread  *btn     = new ButtonThread(*btnMail);
-    UI            *u       = new UI(tft, spr, *cfg, *btnMail);
+    UI            *u       = new UI(tft, spr, *cfg, *sd, *btnMail);
     SamplerThread *sampler = new SamplerThread(*cfg, *u);
 }
 
